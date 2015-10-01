@@ -6,7 +6,11 @@ module Genius (
     GeniusTicTacToe,
     TicTacToe,
     new,
-    newBoard
+    newBoard,
+    gameBoards,
+    gameWinner,
+    boardTiles,
+    boardWinner
 ) where
 
 data Piece = PieceX | PieceO deriving (Show, Eq)
@@ -17,13 +21,13 @@ data TicTacToe = TicTacToe {
 } deriving (Show)
 
 data GeniusTicTacToe = GeniusTicTacToe {
-    boards :: [[TicTacToe]],
-    winner :: Maybe Piece
+    gameBoards :: [[TicTacToe]],
+    gameWinner :: Maybe Piece
 } deriving (Show)
 
 -- Create a new game
 new :: GeniusTicTacToe
-new = GeniusTicTacToe {boards=replicate size $ replicate size boardNew, winner=Nothing}
+new = GeniusTicTacToe {gameBoards=replicate size $ replicate size boardNew, gameWinner=Nothing}
     where size = 3
 
 -- Creates a new board
