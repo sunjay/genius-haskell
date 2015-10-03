@@ -2,37 +2,22 @@
 -- Author: Sunjay Varma --
 
 module Genius (
-    Piece,
-    GeniusTicTacToe,
     TicTacToe,
     new,
-    newBoard,
-    gameBoards,
-    gameWinner,
-    boardTiles,
-    boardWinner
+    tiles,
+    winner
 ) where
 
-data Piece = PieceX | PieceO deriving (Show, Eq)
-
-data TicTacToe = TicTacToe {
-    boardTiles :: [[Maybe Piece]],
-    boardWinner :: Maybe Piece
-} deriving (Show)
+import qualified TicTacToe as T
 
 data GeniusTicTacToe = GeniusTicTacToe {
-    gameBoards :: [[TicTacToe]],
-    gameWinner :: Maybe Piece
+    boards :: [T.TicTacToe],
+    winner :: [Maybe Piece]
 } deriving (Show)
 
 -- Create a new game
 new :: GeniusTicTacToe
-new = GeniusTicTacToe {gameBoards=replicate size $ replicate size newBoard, gameWinner=Nothing}
-    where size = 3
-
--- Creates a new board
-newBoard :: TicTacToe
-newBoard = TicTacToe {boardTiles=replicate size $ replicate size Nothing, boardWinner=Nothing}
+new = GeniusTicTacToe {gameBoards=replicate (size*size) newBoard, gameWinner=Nothing}
     where size = 3
 
 boardRow :: TicTacToe -> Int -> [Maybe Piece]
