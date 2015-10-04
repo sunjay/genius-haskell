@@ -4,11 +4,15 @@
 module Genius (
     TicTacToe,
     new,
-    tiles,
-    winner
+    boards,
+    winner,
+    board,
+    move,
+    board_size
 ) where
 
 import qualified TicTacToe as T
+import TicTacToe (Piece, PieceX, PieceO, board_size)
 
 data GeniusTicTacToe = GeniusTicTacToe {
     boards :: [T.TicTacToe],
@@ -17,11 +21,11 @@ data GeniusTicTacToe = GeniusTicTacToe {
 
 -- Create a new game
 new :: GeniusTicTacToe
-new = GeniusTicTacToe {gameBoards=replicate (size*size) newBoard, gameWinner=Nothing}
-    where size = 3
+new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.new, winner=Nothing}
 
-boardRow :: TicTacToe -> Int -> [Maybe Piece]
-boardRow board row = boardTiles board !! row
+row :: Int -> TicTacToe -> [Maybe Piece]
+row n game
+    | n < board_size = take board_size $ drop (n*board_size) (boards game)
 
 -- Gets a single tile value from a board
 boardTile :: TicTacToe -> Int -> Int -> Maybe Piece

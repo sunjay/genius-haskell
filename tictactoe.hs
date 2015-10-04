@@ -15,7 +15,8 @@ module TicTacToe (
     diagonalTRBL,
     rows,
     cols,
-    diagonals
+    diagonals,
+    board_size
 ) where
 
 import Data.Maybe (isNothing)
