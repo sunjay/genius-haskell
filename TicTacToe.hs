@@ -70,9 +70,9 @@ tile rowIndex colIndex board
     | rowIndex < board_size && colIndex < board_size = tiles board !! (rowIndex * board_size + colIndex)
 
 -- Makes a move on the board
-move :: Int -> Int -> Maybe Piece -> TicTacToe -> TicTacToe
+move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
 move rowIndex colIndex piece board
-    | isNothing (tile rowIndex colIndex board) && not (isNothing piece) && isNothing oldWinner
+    | isNothing (tile rowIndex colIndex board) && isNothing oldWinner
         = TicTacToe {
             tiles=newTiles,
             winner=if isNothing oldWinner then
@@ -85,7 +85,7 @@ move rowIndex colIndex piece board
             newTiles = map filterTiles $ zip [0..] $ tiles board
             filterTiles = (\(index, value) ->
                 if (rowIndex * board_size + colIndex) == index then 
-                    piece
+                    Just piece
                 else
                     value)
 
