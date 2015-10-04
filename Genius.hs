@@ -3,6 +3,9 @@
 
 module Genius (
     TicTacToe,
+    Piece,
+    PieceX,
+    PieceO,
     new,
     boards,
     winner,
@@ -27,6 +30,6 @@ board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
     | rowIndex < board_size && colIndex < board_size = boards game !! (rowIndex * board_size + colIndex)
 
---move :: Int -> Int -> GeniusTicTacToe -> GeniusTicTacToe
+--move :: Int -> Int -> Maybe Piece -> GeniusTicTacToe -> GeniusTicTacToe
 
 
