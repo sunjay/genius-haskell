@@ -95,7 +95,7 @@ checkWinner board =
                     diagonals board]
             in foldl (\acc pieces ->
                 if isNothing acc then
-                    foldl1 (\acc x -> if acc == x then x else Nothing) Nothing pieces
+                    foldl (\acc x -> if acc == x then x else Nothing) Nothing pieces
                 else
                     acc) Nothing pieceSets
 
