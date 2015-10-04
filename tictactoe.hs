@@ -29,13 +29,13 @@ new :: TicTacToe
 new = TicTacToe {tiles=replicate (board_size*board_size) Nothing, winner=Nothing}
 
 -- Extracts a row from the board
-row :: TicTacToe -> Int -> [Maybe Piece]
-row board n
+row :: Int -> TicTacToe -> [Maybe Piece]
+row n board
     | n < board_size = take board_size $ drop (n*board_size) (tiles board)
 
 -- Extracts a column from the board
-col :: TicTacToe -> Int -> [Maybe Piece]
-col board n
+col :: Int -> TicTacToe -> [Maybe Piece]
+col n board
     | n < board_size = each board_size $ drop n $ tiles board
 
 -- Extracts a diagonal from the top left to the bottom right
@@ -45,10 +45,11 @@ col board n
 --diagonalTRBL :: TicTacToe -> [Maybe Piece]
 
 -- Extracts a single tile from the board
---tile :: TicTacToe -> Int -> Maybe Piece
+tile :: Int -> Int -> TicTacToe -> Maybe Piece
+tile rowIndex colIndex board = tiles board !! (rowIndex * board_size + colIndex)
 
 -- Makes a move on the board
---move :: TicTacToe -> Int -> Int -> Piece -> TicTacToe
+--move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
 
 -- Takes each nth element from a list
 each n = map head . takeWhile (not . null) . iterate (drop n)
