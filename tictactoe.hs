@@ -39,10 +39,12 @@ col n board
     | n < board_size = each board_size $ drop n $ tiles board
 
 -- Extracts a diagonal from the top left to the bottom right
---diagonalTLBR :: TicTacToe -> [Maybe Piece]
+diagonalTLBR :: TicTacToe -> [Maybe Piece]
+diagonalTLBR board = map (\n -> tile n n board) [0..board_size-1]
 
 -- Extracts a diagonal from the top left to the bottom right
---diagonalTRBL :: TicTacToe -> [Maybe Piece]
+diagonalTRBL :: TicTacToe -> [Maybe Piece]
+diagonalTRBL board = map (\n -> tile n (board_size-n) board) [0..board_size-1]
 
 -- Extracts a single tile from the board
 tile :: Int -> Int -> TicTacToe -> Maybe Piece
