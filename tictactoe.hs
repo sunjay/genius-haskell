@@ -12,7 +12,10 @@ module TicTacToe (
     --tile,
     --move,
     --diagonalTLBR,
-    --diagonalTRBL
+    --diagonalTRBL,
+    rows,
+    cols,
+    diagonals
 ) where
 
 import Data.Maybe (isNothing)
@@ -35,10 +38,18 @@ row :: Int -> TicTacToe -> [Maybe Piece]
 row n board
     | n < board_size = take board_size $ drop (n*board_size) (tiles board)
 
+-- Extracts all the rows from the board
+rows :: TicTacToe -> [[Maybe Piece]]
+rows board = map (\n -> row n board) [0..board_size-1]
+
 -- Extracts a column from the board
 col :: Int -> TicTacToe -> [Maybe Piece]
 col n board
     | n < board_size = each board_size $ drop n $ tiles board
+
+-- Extracts all the rows from the board
+cols :: TicTacToe -> [[Maybe Piece]]
+cols board = map (\n -> col n board) [0..board_size-1]
 
 -- Extracts a diagonal from the top left to the bottom right
 diagonalTLBR :: TicTacToe -> [Maybe Piece]
@@ -47,6 +58,10 @@ diagonalTLBR board = map (\n -> tile n n board) [0..board_size-1]
 -- Extracts a diagonal from the top left to the bottom right
 diagonalTRBL :: TicTacToe -> [Maybe Piece]
 diagonalTRBL board = map (\n -> tile n (board_size-n) board) [0..board_size-1]
+
+-- Extracts all the rows from the board
+diagonals :: TicTacToe -> [[Maybe Piece]]
+diagonals board = [diagonalTLBR board, diagonalTRBL board]
 
 -- Extracts a single tile from the board
 tile :: Int -> Int -> TicTacToe -> Maybe Piece
@@ -59,13 +74,30 @@ move rowIndex colIndex piece board
     | rowIndex < board_size && colIndex < board_size && not (isNothing piece) && isNothing (winner board)
         = TicTacToe {
             tiles=map filterTiles $ zip [0..] $ tiles board,
-            winner=winner board
+            winner=checkWinner board
         }
         where filterTiles = (\(index, value) ->
                 if (rowIndex * board_size + colIndex) == index then 
                     piece
                 else
                     value)
+
+-- Returns the winner of a game or Nothing if there is no winner
+checkWinner :: TicTacToe -> Maybe Piece
+checkWinner board = 
+    let oldWinner = winner board in
+        if not $ isNothing oldWinner then
+            oldWinner
+        else
+            let pieceSets = concat [
+                    rows board,
+                    cols board,
+                    diagonals board]
+            in foldl (\acc pieces ->
+                if isNothing acc then
+                    foldl1 (\acc x -> if acc == x then x else Nothing) Nothing pieces
+                else
+                    acc) Nothing pieceSets
 
 -- Takes each nth element from a list
 each n = map head . takeWhile (not . null) . iterate (drop n)
