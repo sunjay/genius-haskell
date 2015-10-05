@@ -9,7 +9,7 @@ module Genius (
     boards,
     winner,
     board,
---    move,
+    move,
     board_size
 ) where
 
@@ -32,6 +32,17 @@ board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
     | rowIndex < board_size && colIndex < board_size = boards game !! (rowIndex * board_size + colIndex)
 
---move :: Int -> Int -> Maybe Piece -> GeniusTicTacToe -> GeniusTicTacToe
+move :: Int -> Int -> Piece -> GeniusTicTacToe -> GeniusTicTacToe
+move row col piece game
+    | isNothing oldWinner =
+        if current == Any then
+            let localBoard = board (row `quot` board_size) (col `quot` board_size) game
+                localRow = row `mod` board_size
+                localCol = col `mod` board_size
+                newBoard = T.move localRow localCol piece localBoard
+                --TODO
+    where
+        oldWinner = winner game
+        current = currentBoard game
 
 
