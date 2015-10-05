@@ -16,7 +16,8 @@ module TicTacToe (
     rows,
     cols,
     diagonals,
-    board_size
+    board_size,
+    isFull
 ) where
 
 import Data.Maybe (isNothing)
@@ -68,6 +69,9 @@ diagonals board = [diagonalTLBR board, diagonalTRBL board]
 tile :: Int -> Int -> TicTacToe -> Maybe Piece
 tile rowIndex colIndex board
     | rowIndex < board_size && colIndex < board_size = tiles board !! (rowIndex * board_size + colIndex)
+
+isFull :: TicTacToe -> Bool
+isFull board = foldl (\acc piece -> if isNothing piece then False else acc) True (tiles board)
 
 -- Makes a move on the board
 move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
