@@ -3,9 +3,8 @@
 
 module Genius (
     TicTacToe,
-    Piece,
-    PieceX,
-    PieceO,
+    Piece (PieceX, PieceO),
+    CurrentBoard (Any, Board),
     new,
     boards,
     winner,
@@ -17,14 +16,17 @@ module Genius (
 import qualified TicTacToe as T
 import TicTacToe (TicTacToe, Piece (PieceX, PieceO), board_size)
 
+data CurrentBoard = Any | Board Int deriving (Show, Eq)
+
 data GeniusTicTacToe = GeniusTicTacToe {
+    currentBoard :: CurrentBoard,
     boards :: [TicTacToe],
     winner :: Maybe Piece
 } deriving (Show)
 
 -- Create a new game
 new :: GeniusTicTacToe
-new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.new, winner=Nothing}
+new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.new, winner=Nothing, currentBoard=Any}
 
 board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
