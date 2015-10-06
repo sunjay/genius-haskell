@@ -34,7 +34,10 @@ data TicTacToe = TicTacToe {
 
 -- Creates a new board
 new :: TicTacToe
-new = TicTacToe {tiles=replicate (board_size*board_size) Nothing, winner=Nothing}
+new = fromPieces $ replicate (board_size*board_size) Nothing
+
+fromPieces :: [Maybe Piece] -> TicTacToe
+fromPieces tiles' = TicTacToe {tiles=tiles', winner=Nothing}
 
 -- Extracts a row from the board
 row :: Int -> TicTacToe -> [Maybe Piece]
@@ -68,7 +71,7 @@ diagonals board = [diagonalTLBR board, diagonalTRBL board]
 
 -- All the rows, columns and diagonals from the board
 pieceSets :: TicTacToe -> [[Maybe Piece]]
-pieceSets board = concat [rows board, columns board, diagonals board]
+pieceSets board = concat [rows board, cols board, diagonals board]
 
 -- Extracts a single tile from the board
 tile :: Int -> Int -> TicTacToe -> Maybe Piece
@@ -101,13 +104,12 @@ move rowIndex colIndex piece board
                 else
                     value)
 
--- 
 checkWinner :: [[Maybe Piece]] -> Maybe Piece
 checkWinner pieceSets' = foldr (\pieces acc ->
         if isNothing acc then
             checkRowWinner pieces
         else
-            acc) Nothing pieceSets
+            acc) Nothing pieceSets'
 
 checkRowWinner :: [Maybe Piece] -> Maybe Piece
 checkRowWinner = foldl1 (\acc x -> if acc == x then x else Nothing)
