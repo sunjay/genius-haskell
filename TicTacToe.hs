@@ -66,6 +66,10 @@ diagonalTRBL board = map (\n -> tile n (board_size-n-1) board) [0..board_size-1]
 diagonals :: TicTacToe -> [[Maybe Piece]]
 diagonals board = [diagonalTLBR board, diagonalTRBL board]
 
+-- All the rows, columns and diagonals from the board
+pieceSets :: TicTacToe -> [[Maybe Piece]]
+pieceSets board = concat [rows board, columns board, diagonals board]
+
 -- Extracts a single tile from the board
 tile :: Int -> Int -> TicTacToe -> Maybe Piece
 tile rowIndex colIndex board
@@ -81,13 +85,15 @@ move rowIndex colIndex piece board
     | isNothing (tile rowIndex colIndex board) && isNothing oldWinner
         = TicTacToe {
             tiles=newTiles,
-            winner=if isNothing oldWinner then
-                checkWinner TicTacToe {tiles=newTiles, winner=Nothing}
-            else
-                oldWinner
+            winner=newWinner
         }
         where
             oldWinner = winner board
+            newWinner = 
+                if isNothing oldWinner then
+                    checkWinner $ pieceSets board
+                else
+                    oldWinner
             newTiles = map filterTiles $ zip [0..] $ tiles board
             filterTiles = (\(index, value) ->
                 if (rowIndex * board_size + colIndex) == index then 
@@ -95,18 +101,16 @@ move rowIndex colIndex piece board
                 else
                     value)
 
--- Returns the winner of a game or Nothing if there is no winner
-checkWinner :: TicTacToe -> Maybe Piece
-checkWinner board = 
-    let pieceSets = concat [
-            rows board,
-            cols board,
-            diagonals board]
-    in foldl (\acc pieces ->
+-- 
+checkWinner :: [[Maybe Piece]] -> Maybe Piece
+checkWinner pieceSets' = foldr (\pieces acc ->
         if isNothing acc then
-            foldl1 (\acc x -> if acc == x then x else Nothing) pieces
+            checkRowWinner pieces
         else
             acc) Nothing pieceSets
+
+checkRowWinner :: [Maybe Piece] -> Maybe Piece
+checkRowWinner = foldl1 (\acc x -> if acc == x then x else Nothing)
 
 -- Takes each nth element from a list
 each n = map head . takeWhile (not . null) . iterate (drop n)
