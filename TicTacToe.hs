@@ -20,6 +20,7 @@ module TicTacToe (
     isFull
 ) where
 
+import Data.List (find)
 import Data.Maybe (isNothing)
 
 board_size = 3
@@ -71,7 +72,8 @@ tile rowIndex colIndex board
     | rowIndex < board_size && colIndex < board_size = tiles board !! (rowIndex * board_size + colIndex)
 
 isFull :: TicTacToe -> Bool
-isFull board = foldl (\acc piece -> if isNothing piece then False else acc) True (tiles board)
+-- If you don't find any Nothings, there is no empty spots
+isFull board = isNothing $ find isNothing (tiles board)
 
 -- Makes a move on the board
 move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
