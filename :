@@ -4,7 +4,7 @@
 module TicTacToe (
     Piece (PieceX, PieceO),
     TicTacToe,
-    empty,
+    new,
     tiles,
     winner,
     row,
@@ -35,58 +35,42 @@ data TicTacToe = TicTacToe {
     winner :: Maybe Piece
 } deriving (Show)
 
--- Creates an empty board
-empty :: TicTacToe
-empty = fromPieces $ replicate (board_size*board_size) Nothing
+-- Creates a new board
+new :: TicTacToe
+new = fromPieces $ replicate (board_size*board_size) Nothing
 
--- Creates a board from the given list of pieces
 fromPieceList :: [Maybe Piece] -> TicTacToe
 fromPieceList = fromPieces . S.fromList
 
--- Creates a board from the given sequence of pieces
 fromPieces :: Pieces -> TicTacToe
 fromPieces tiles' = TicTacToe {tiles=tiles', winner=[TODO: Check winner]}
-        let oldWinner = winner board
-            newWinner = 
-                if isNothing oldWinner then
-                    checkWinner $ pieceSets board
-                else
-                    oldWinner
-
--- Extracts a row from the board
-tilesRow :: Int -> Pieces -> Pieces
-tilesRow n tiles'
-    | n < board_size = S.take board_size $ S.drop (n*board_size) tiles'
--- Extracts a column from the board
-tilesCol :: Int -> Pieces -> Pieces
-tilesCol n tiles'
-    | n < board_size = take board_size $ each board_size $ drop n $ tiles'
--- Extracts a diagonal from the top left to the bottom right
-tilesDiagonalTLBR :: Pieces -> Pieces
-tilesDiagonalTLBR tiles' = map (\n -> tilesTile n n tiles') [0..board_size-1]
--- Extracts a diagonal from the top left to the bottom right
-tilesDiagonalTRBL :: Pieces -> Pieces
-tilesDiagonalTRBL tiles' = map (\n -> tilesTile n (board_size-n-1) tiles') [0..board_size-1]
 
 -- Extracts a row from the board
 row :: Int -> TicTacToe -> Pieces
-row n = tilesRow $ tiles
--- Extracts a column from the board
-col :: Int -> TicTacToe -> Pieces
-col n = tilesCol $ tiles
--- Extracts a diagonal from the top left to the bottom right
-diagonalTLBR :: TicTacToe -> Pieces
-diagonalTLBR = tilesDiagonalTLBR $ tiles
--- Extracts a diagonal from the top left to the bottom right
-diagonalTRBL :: TicTacToe -> Pieces
-diagonalTRBL = tilesDiagonalTRBL $ tiles
+row n board
+    | n < board_size = S.take board_size $ S.drop (n*board_size) (tiles board)
 
 -- Extracts all the rows from the board
 rows :: TicTacToe -> [Pieces]
 rows board = map (\n -> row n board) [0..board_size-1]
+
+-- Extracts a column from the board
+col :: Int -> TicTacToe -> Pieces
+col n board
+    | n < board_size = take board_size $ each board_size $ drop n $ tiles board
+
 -- Extracts all the rows from the board
 cols :: TicTacToe -> [Pieces]
 cols board = map (\n -> col n board) [0..board_size-1]
+
+-- Extracts a diagonal from the top left to the bottom right
+diagonalTLBR :: TicTacToe -> Pieces
+diagonalTLBR board = map (\n -> tile n n board) [0..board_size-1]
+
+-- Extracts a diagonal from the top left to the bottom right
+diagonalTRBL :: TicTacToe -> Pieces
+diagonalTRBL board = map (\n -> tile n (board_size-n-1) board) [0..board_size-1]
+
 -- Extracts all the rows from the board
 diagonals :: TicTacToe -> [Pieces]
 diagonals board = [diagonalTLBR board, diagonalTRBL board]
@@ -107,8 +91,15 @@ isFull board = isNothing $ S.findIndexL isNothing (tiles board)
 -- Makes a move on the board
 move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
 move rowIndex colIndex piece board
-    | isNothing (tile rowIndex colIndex board)
-        = fromPieces $ S.update (rowIndex * board_size + colIndex) (Just piece) (tiles board)
+    | isNothing (tile rowIndex colIndex board) =
+        let oldWinner = winner board
+            newWinner = 
+                if isNothing oldWinner then
+                    checkWinner $ pieceSets board
+                else
+                    oldWinner
+            newTiles = S.update (rowIndex * board_size + colIndex) (Just piece) (tiles board)
+        in fromPieces newTiles
 
 checkWinner :: [[Maybe Piece]] -> Maybe Piece
 checkWinner pieceSets' = foldr (\pieces acc ->

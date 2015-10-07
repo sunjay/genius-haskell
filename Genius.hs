@@ -26,7 +26,7 @@ data GeniusTicTacToe = GeniusTicTacToe {
 
 -- Create a new game
 new :: GeniusTicTacToe
-new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.new, winner=Nothing, currentBoard=Any}
+new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.empty, winner=Nothing, currentBoard=Any}
 
 board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
