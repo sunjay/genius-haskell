@@ -2,10 +2,10 @@
 -- Author: Sunjay Varma --
 
 module TicTacToe (
-    Piece,
-    PieceX,
-    PieceO,
+    Piece (PieceX, PieceO),
     TicTacToe,
+    fromPieces,
+    fromPieceList,
     empty,
     tiles,
     winner,
@@ -22,10 +22,13 @@ module TicTacToe (
     isFull
 ) where
 
+import qualified Pieces as P
+import qualified Data.Sequence as S
+
 import Data.Maybe (isNothing)
+import Data.Foldable (toList)
 
 import Pieces (board_size, Piece (PieceX, PieceO), Pieces)
-import qualified Pieces as P
 
 data TicTacToe = TicTacToe {
     tiles :: Pieces,
@@ -34,7 +37,7 @@ data TicTacToe = TicTacToe {
 
 -- Creates an empty board
 empty :: TicTacToe
-empty = fromPieces $ replicate (board_size*board_size) Nothing
+empty = fromPieces $ S.replicate (board_size*board_size) Nothing
 
 -- Creates a board from the given list of pieces
 fromPieceList :: [Maybe Piece] -> TicTacToe
@@ -42,55 +45,66 @@ fromPieceList = fromPieces . P.fromPieceList
 
 -- Creates a board from the given sequence of pieces
 fromPieces :: Pieces -> TicTacToe
-fromPieces tiles' = TicTacToe {tiles=tiles', winner=[TODO: Check winner]}
-        let oldWinner = winner board
-            newWinner = 
-                if isNothing oldWinner then
-                    checkWinner $ pieceSets board
-                else
-                    oldWinner
+fromPieces tiles' = TicTacToe {tiles=tiles', winner=checkWinner $ P.pieceSets tiles'}
 
 -- Extracts a row from the board
 row :: Int -> TicTacToe -> Pieces
-row n = tilesRow $ tiles
+row n board = P.row n $ tiles board
 -- Extracts a column from the board
 col :: Int -> TicTacToe -> Pieces
-col n = tilesCol $ tiles
+col n board = P.col n $ tiles board
+-- Extracts a single tile from the board
+tile :: Int -> Int -> TicTacToe -> Maybe Piece
+tile rowIndex colIndex board = P.tile rowIndex colIndex $ tiles board
 -- Extracts a diagonal from the top left to the bottom right
 diagonalTLBR :: TicTacToe -> Pieces
-diagonalTLBR = tilesDiagonalTLBR $ tiles
+diagonalTLBR = P.diagonalTLBR . tiles
 -- Extracts a diagonal from the top left to the bottom right
 diagonalTRBL :: TicTacToe -> Pieces
-diagonalTRBL = tilesDiagonalTRBL $ tiles
+diagonalTRBL = P.diagonalTRBL . tiles
 
 -- Extracts all the rows from the board
 rows :: TicTacToe -> [Pieces]
-rows board = map (\n -> row n board) [0..board_size-1]
+rows = P.rows . tiles
 -- Extracts all the rows from the board
 cols :: TicTacToe -> [Pieces]
-cols board = map (\n -> col n board) [0..board_size-1]
+cols = P.cols . tiles
 -- Extracts all the rows from the board
 diagonals :: TicTacToe -> [Pieces]
-diagonals board = [diagonalTLBR board, diagonalTRBL board]
+diagonals = P.diagonals . tiles
 
 -- All the rows, columns and diagonals from the board
 pieceSets :: TicTacToe -> [Pieces]
-pieceSets board = concat [rows board, cols board, diagonals board]
+pieceSets = P.pieceSets . tiles
 
+-- Returns whether the board is full
+isFull :: TicTacToe -> Bool
+isFull = P.isFull . tiles
 
 -- Makes a move on the board
 move :: Int -> Int -> Piece -> TicTacToe -> TicTacToe
 move rowIndex colIndex piece board
     | isNothing (tile rowIndex colIndex board)
-        = fromPieces $ S.update (rowIndex * board_size + colIndex) (Just piece) (tiles board)
+        = TicTacToe {
+            tiles=newTiles,
+            winner=
+                if isNothing oldWinner then
+                    checkWinner (P.pieceSets newTiles)
+                else
+                    oldWinner
+        }
+        where 
+            oldWinner = winner board
+            newTiles = S.update (rowIndex * board_size + colIndex) (Just piece) (tiles board)
 
-checkWinner :: [[Maybe Piece]] -> Maybe Piece
+-- Checks to see if there is any winner in the given piece sets
+checkWinner :: [Pieces] -> Maybe Piece
 checkWinner pieceSets' = foldr (\pieces acc ->
-        if isNothing acc then
-            checkRowWinner pieces
-        else
-            acc) Nothing pieceSets'
+    if isNothing acc then
+        checkRowWinner pieces
+    else
+        acc) Nothing pieceSets'
 
-checkRowWinner :: [Maybe Piece] -> Maybe Piece
-checkRowWinner = foldl1 (\acc x -> if acc == x then x else Nothing)
+checkRowWinner :: Pieces -> Maybe Piece
+checkRowWinner pieces = foldl1 (\acc x -> if acc == x then x else Nothing) $ toList pieces
 

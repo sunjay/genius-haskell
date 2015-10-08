@@ -48,6 +48,7 @@ tile :: Int -> Int -> Pieces -> Maybe Piece
 tile rowIndex colIndex tiles'
     | rowIndex < board_size && colIndex < board_size = S.index tiles' (rowIndex * board_size + colIndex)
 
+-- Returns whether the board is full
 isFull :: Pieces -> Bool
 -- If you don't find any Nothings, there is no empty spots
 isFull tiles' = isNothing $ S.findIndexL isNothing tiles'
