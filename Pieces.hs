@@ -12,7 +12,8 @@ module Pieces (
     diagonals,
     pieceSets,
     board_size,
-    isFull
+    isFull,
+    each
 ) where
 
 import Data.Maybe (isNothing)
