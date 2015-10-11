@@ -34,12 +34,21 @@ data GeniusTicTacToe = GeniusTicTacToe {
 empty :: GeniusTicTacToe
 empty = GeniusTicTacToe {boards=replicate (board_size*board_size) T.empty, winner=Nothing, currentBoard=Any}
 
+-- Extracts a row of boards from the game
+row :: Int -> GeniusTicTacToe -> Boards
+
+-- Extracts a column of boards from the game
+col :: Int -> GeniusTicTacToe -> Boards
+
+-- Extracts a single board from the game
 board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
     | rowIndex < board_size && colIndex < board_size = boards game !! (rowIndex * board_size + colIndex)
 
+-- Makes a move on the current board or on any of the boards if the current board is any
+-- If the current board is any then the indexes should be between 0 and board_size*board_size, otherwise they should be less than board_size and correspond to a position on the current board
 move :: Int -> Int -> Piece -> GeniusTicTacToe -> GeniusTicTacToe
-move row col piece game
+move rowIndex colIndex piece game
     | isNothing oldWinner =
         if current == Any then
             let localBoard = board (row `quot` board_size) (col `quot` board_size) game
