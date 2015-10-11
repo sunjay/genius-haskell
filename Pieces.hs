@@ -33,10 +33,12 @@ fromPieceList = S.fromList
 row :: Int -> Pieces -> Pieces
 row n tiles'
     | n < board_size = S.take board_size $ S.drop (n*board_size) tiles'
+    | otherwise = S.empty
 -- Extracts a column from the board
 col :: Int -> Pieces -> Pieces
 col n tiles'
     | n < board_size = S.take board_size $ each board_size $ S.drop n $ tiles'
+    | otherwise = S.empty
 -- Extracts a diagonal from the top left to the bottom right
 diagonalTLBR :: Pieces -> Pieces
 diagonalTLBR tiles' = S.fromList $ map (\n -> tile n n tiles') [0..board_size-1]
@@ -47,6 +49,7 @@ diagonalTRBL tiles' = S.fromList $ map (\n -> tile n (board_size-n-1) tiles') [0
 tile :: Int -> Int -> Pieces -> Maybe Piece
 tile rowIndex colIndex tiles'
     | rowIndex < board_size && colIndex < board_size = S.index tiles' (rowIndex * board_size + colIndex)
+    | otherwise = Nothing
 
 -- Returns whether the board is full
 isFull :: Pieces -> Bool
