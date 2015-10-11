@@ -2,31 +2,37 @@
 -- Author: Sunjay Varma --
 
 module Genius (
+    GeniusTicTacToe,
     TicTacToe,
     Piece (PieceX, PieceO),
     CurrentBoard (Any, Board),
-    new,
+    empty,
+    currentBoard,
     boards,
     winner,
+    row,
+    col,
     board,
     move,
-    board_size
+    board_size,
+    isFull
 ) where
 
 import qualified TicTacToe as T
 import TicTacToe (TicTacToe, Piece (PieceX, PieceO), board_size)
 
 data CurrentBoard = Any | Board Int deriving (Show, Eq)
+type Boards = Seq TicTacToe
 
 data GeniusTicTacToe = GeniusTicTacToe {
     currentBoard :: CurrentBoard,
-    boards :: [TicTacToe],
+    boards :: Boards,
     winner :: Maybe Piece
 } deriving (Show)
 
 -- Create a new game
-new :: GeniusTicTacToe
-new = GeniusTicTacToe {boards=replicate (board_size*board_size) T.empty, winner=Nothing, currentBoard=Any}
+empty :: GeniusTicTacToe
+empty = GeniusTicTacToe {boards=replicate (board_size*board_size) T.empty, winner=Nothing, currentBoard=Any}
 
 board :: Int -> Int -> GeniusTicTacToe -> TicTacToe
 board rowIndex colIndex game
