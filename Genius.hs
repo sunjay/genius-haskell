@@ -18,6 +18,8 @@ module Genius (
     isFull
 ) where
 
+import Data.Maybe (isNothing)
+
 import qualified Data.Sequence as S
 import Data.Sequence (Seq)
 
@@ -65,13 +67,18 @@ isFull game = and $ fmap T.isFull $ boards game
 move :: Int -> Int -> Piece -> GeniusTicTacToe -> GeniusTicTacToe
 move rowIndex colIndex piece game
     | isNothing oldWinner =
-        if current == Any then
-            let localBoard = board (row `quot` board_size) (col `quot` board_size) game
-                localRow = row `mod` board_size
-                localCol = col `mod` board_size
-                newBoard = T.move localRow localCol piece localBoard
-                --TODO
+        let (current, rowIndex', colIndex') = localCoordinates rowIndex colIndex game
+        in game
     where
         oldWinner = winner game
-        current = currentBoard game
+        localCoordinates = (\rowIndex colIndex game ->
+            case currentBoard game of
+                Any -> 
+                    let cBoard = board (rowIndex `quot` board_size) (colIndex `quot` board_size) game
+                        rowIndex' = rowIndex `mod` board_size
+                        colIndex' = colIndex `mod` board_size
+                    in (cBoard, rowIndex', colIndex')
+                Board boardIndex ->
+                    (S.index (boards game) boardIndex, rowIndex, colIndex)
+            )
 
