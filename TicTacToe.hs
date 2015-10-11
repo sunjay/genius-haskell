@@ -105,6 +105,7 @@ checkWinner pieceSets' = foldr (\pieces acc ->
     else
         acc) Nothing pieceSets'
 
+-- Checks a single row of pieces for a winner
 checkRowWinner :: Pieces -> Maybe Piece
 checkRowWinner pieces = foldl1 (\acc x -> if acc == x then x else Nothing) $ toList pieces
 
