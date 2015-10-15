@@ -61,11 +61,17 @@ isFull game = and $ fmap T.isFull $ M.toList $ boards game
 -- Makes a move on the current board or on any of the boards if the current board is any
 -- If the current board is any then the indexes should be between 0 and board_size*board_size, otherwise they should be less than board_size and correspond to a position on the current board
 move :: Int -> Int -> Piece -> GeniusTicTacToe -> GeniusTicTacToe
-move rowIndex colIndex piece game
-    = GeniusTicTacToe {
-        currentBoard=Board (rowIndex, colIndex),
-        boards=moveBoard rowIndex colIndex piece game (currentBoard game)
+move rowIndex colIndex piece game =
+    let (current', rowIndex', colIndex') =
+        if current == Any then localCoordinates(rowIndex, colIndex)
+        else (current, rowIndex, colIndex)
+    in GeniusTicTacToe {
+        currentBoard=Board (rowIndex', colIndex'),
+        boards=moveBoard rowIndex' colIndex' piece game current'
     }
+    where
+        current = currentBoard game
+        localCoordinates r c = (Board (r `quot` board_size, c `quot` board_size), r `mod` board_size, c `mod` board_size)
 
 -- Makes the actual move and returns the new BoardMatrix
 moveBoard :: Int -> Int -> Piece -> GeniusTicTacToe -> CurrentBoard -> BoardMatrix
