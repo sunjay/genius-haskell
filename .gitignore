@@ -1,5 +1,7 @@
 # Created by https://www.gitignore.io/api/haskell,vim
 
+Play
+
 ### Haskell ###
 dist
 cabal-dev
