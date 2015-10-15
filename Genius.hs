@@ -63,8 +63,8 @@ isFull game = and $ fmap T.isFull $ M.toList $ boards game
 move :: Int -> Int -> Piece -> GeniusTicTacToe -> GeniusTicTacToe
 move rowIndex colIndex piece game =
     let (current', rowIndex', colIndex') =
-        if current == Any then localCoordinates(rowIndex, colIndex)
-        else (current, rowIndex, colIndex)
+            if current == Any then localCoordinates rowIndex colIndex
+            else (current, rowIndex, colIndex)
     in GeniusTicTacToe {
         currentBoard=Board (rowIndex', colIndex'),
         boards=moveBoard rowIndex' colIndex' piece game current'
