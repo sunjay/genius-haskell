@@ -27,7 +27,12 @@ import qualified Data.Matrix as M
 
 board_size = 3
 
-data Piece = PieceX | PieceO deriving (Show, Eq)
+data Piece = PieceX | PieceO deriving (Eq)
+
+instance Show Piece where
+    show PieceX = "x"
+    show PieceO = "o"
+
 type TicTacToe = Matrix (Maybe Piece)
 type Pieces = Vector (Maybe Piece)
 
