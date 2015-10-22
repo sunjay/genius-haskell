@@ -1,26 +1,34 @@
-import Data.Char (toUpper, digitToInt)
+import Data.Char (toUpper)
 import Data.List (elemIndex)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (isNothing)
 
-import Genius (GeniusTicTacToe, empty, move)
+import Genius (GeniusTicTacToe, empty, move, Piece (PieceX, PieceO))
 
-main = playGame empty
+main = playGame PieceX empty
 
-playGame :: GeniusTicTacToe -> IO ()
-playGame game = do
-    rawMove <- getLine
-    let (col, row) = parseInput rawMove
-    print col
-    print row
+playGame :: Piece -> GeniusTicTacToe -> IO ()
+playGame currentPiece game = do
+    print game
+    putStr "Enter your move: "
+    parsedMove <- fmap parseInput getLine
+    if isNothing parsedMove then do
+        putStrLn "Please enter a valid move in the form A1"
+        playGame currentPiece game
+    else
+        let Just (row, col) = parsedMove
+            game' = move row col currentPiece game
+            currentPiece' = if currentPiece == PieceX then PieceO else PieceX
+        in do
+            playGame currentPiece' game'
 
-parseInput :: String -> (Int, Int)
+
+parseInput :: String -> Maybe (Int, Int)
 parseInput string
     | length string == 2 =
-        let col = (fromMaybe 
-                (error "Invalid column letter")
-                (elemIndex (toUpper (string !! 0)) ['A'..])) + 1
-            row = digitToInt $ string !! 1
-        in (row, col)
-    | otherwise = error "Enter a move in the form A1"
-
-
+        let col = (+1) <$> elemIndex (toUpper (string !! 0)) ['A'..]
+            row = (+1) <$> elemIndex (string !! 1) ['1'..'9']
+        in if isNothing col || isNothing row then
+                Nothing
+            else
+                (,) <$> row <*> col
+    | otherwise = Nothing
