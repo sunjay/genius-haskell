@@ -6,6 +6,8 @@ module Genius (
     TicTacToe,
     Piece (PieceX, PieceO),
     CurrentBoard (Any, Board),
+    BoardMatrix,
+    Boards,
     empty,
     currentBoard,
     boards,

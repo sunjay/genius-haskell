@@ -4,6 +4,7 @@
 module TicTacToe (
     Piece (PieceX, PieceO),
     TicTacToe,
+    Pieces,
     empty,
     winner,
     row,
