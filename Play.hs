@@ -3,6 +3,7 @@ import Data.List (elemIndex)
 import Data.Maybe (isNothing)
 
 import System.IO (hSetBuffering, BufferMode (NoBuffering), stdout)
+import System.Console.ANSI (clearScreen)
 
 import Genius (GeniusTicTacToe, currentBoard, empty, move, Piece (PieceX, PieceO))
 import TextFormat (format, formatCurrentBoard)
@@ -13,6 +14,7 @@ main = do
 
 playGame :: Piece -> GeniusTicTacToe -> IO ()
 playGame currentPiece game = do
+    clearScreen
     putStrLn $ format game
     putStrLn $ "The current piece is: " ++ (show currentPiece)
     putStrLn $ "You can currently move on " ++ (formatCurrentBoard $ currentBoard game) ++ " board."
