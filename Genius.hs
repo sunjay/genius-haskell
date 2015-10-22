@@ -71,7 +71,7 @@ move rowIndex colIndex piece game =
     }
     where
         current = currentBoard game
-        localCoordinates r c = (Board (r `quot` board_size, c `quot` board_size), r `mod` board_size, c `mod` board_size)
+        localCoordinates r c = (Board ((r-1) `quot` board_size + 1, (c-1) `quot` board_size + 1), (r-1) `mod` board_size + 1, (c-1) `mod` board_size + 1)
 
 -- Makes the actual move and returns the new BoardMatrix
 moveBoard :: Int -> Int -> Piece -> GeniusTicTacToe -> CurrentBoard -> BoardMatrix
