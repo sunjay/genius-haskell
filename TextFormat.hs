@@ -36,6 +36,6 @@ boardHorizontalSeparator = " " ++ (take 52 $ repeat '\x2550')
 formatCurrentBoard :: CurrentBoard -> String
 formatCurrentBoard Any = "any"
 formatCurrentBoard (Board (row, col)) = "the "
-    ++ (["top", "middle", "bottom"] !! row)
+    ++ (["top", "middle", "bottom"] !! (row - 1))
     ++ " "
-    ++ (["left", "center", "right"] !! col)
+    ++ (["left", "center", "right"] !! (col - 1))
