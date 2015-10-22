@@ -4,7 +4,8 @@ import Data.Maybe (isNothing)
 
 import System.IO (hSetBuffering, BufferMode (NoBuffering), stdout)
 
-import Genius (GeniusTicTacToe, empty, move, Piece (PieceX, PieceO))
+import Genius (GeniusTicTacToe, currentBoard, empty, move, Piece (PieceX, PieceO))
+import TextFormat (format, formatCurrentBoard)
 
 main = do
     hSetBuffering stdout NoBuffering
@@ -12,8 +13,9 @@ main = do
 
 playGame :: Piece -> GeniusTicTacToe -> IO ()
 playGame currentPiece game = do
-    print game
-    putStrLn $ "It is currently " ++ (show currentPiece) ++ "'s move"
+    putStrLn $ format game
+    putStrLn $ "The current piece is: " ++ (show currentPiece)
+    putStrLn $ "You can currently move on " ++ (formatCurrentBoard $ currentBoard game) ++ " board."
     (row, col) <- getValidMove
     let game' = move row col currentPiece game
         currentPiece' = if currentPiece == PieceX then PieceO else PieceX
